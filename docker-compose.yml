@@ -1,0 +1,41 @@
+name: vantra
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: vantra
+      POSTGRES_PASSWORD: vantra
+      POSTGRES_DB: vantra
+    ports:
+      - "5433:5432"   # host 5433 to avoid clashing with a local postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vantra"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - vantra_pgdata:/var/lib/postgresql/data
+
+  api:
+    build: ./vantra-api
+    environment:
+      VANTRA_DATABASE_URL: postgresql://vantra:vantra@db:5432/vantra
+    ports:
+      - "8712:8712"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - vantra_images:/app/data/images
+
+  dashboard:
+    build: ./vantra-dashboard
+    ports:
+      - "8090:80"
+    depends_on:
+      - api
+
+volumes:
+  vantra_pgdata:
+  vantra_images:
