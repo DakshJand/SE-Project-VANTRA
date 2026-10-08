@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+psqlpy
+httpx
+numpy
+scipy
+pillow
+python-multipart
+jinja2
+reportlab
+pypdf
+requests
+pytest
+pytest-cov
+easyocr
